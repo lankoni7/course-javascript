@@ -146,33 +146,36 @@ function deleteTextNodesRecursive(where) {
      texts: 3
    }
  */
-const tagsArr = [];
-const classesArr = [];
-const textsArr = [];
 
 function collectDOMStat(root) {
+  const tagsArr = [];
+  const classesArr = [];
   const tags = {};
   const classes = {};
+  let texts = 0;
 
-  Array.from(root.childNodes).forEach((node) => {
-    if (node.nodeType === 3) {
-      textsArr.push(node);
-    } else {
-      tagsArr.push(node.tagName);
-      Array.from(node.classList).forEach((el) => classesArr.push(el));
-      collectDOMStat(node);
-    }
-  });
+  const collectDOMStatInner = (root) => {
+    Array.from(root.childNodes).forEach((node) => {
+      if (node.nodeType === 3) {
+        texts++;
+      } else {
+        tagsArr.push(node.tagName);
+        Array.from(node.classList).forEach((el) => classesArr.push(el));
+        collectDOMStatInner(node);
+      }
+    });
+  };
+  collectDOMStatInner(root);
+
   tagsArr.forEach(function (tag) {
     tags[tag] = (tags[tag] || 0) + 1;
   });
   classesArr.forEach(function (tag) {
     classes[tag] = (classes[tag] || 0) + 1;
   });
-  return { tags, classes, texts: textsArr.length };
+  return { tags, classes, texts };
 }
-const result = collectDOMStat(document.querySelector('.wrapper'));
-console.log(result);
+
 /*
  Задание 8 *:
 
@@ -205,12 +208,6 @@ console.log(result);
      nodes: [div]
    }
  */
-
-const item = '<button>Button</button>';
-const element = document.querySelector('.div');
-element.addEventListener('click', () => {
-  element.insertAdjacentHTML('afterbegin', item);
-});
 
 function observeChildNodes(where, fn) {
   const observer = new MutationObserver((mutations) => {
