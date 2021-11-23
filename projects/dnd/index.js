@@ -21,7 +21,30 @@ const homeworkContainer = document.querySelector('#app');
 
 document.addEventListener('mousemove', (e) => {});
 
-export function createDiv() {}
+export function createDiv() {
+  const div = document.createElement('div');
+  function getRandomArbitrary(min, max) {
+    return Math.floor(Math.random() * (max - min) + min);
+  }
+
+  function getRandomColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+
+  div.style.width = `${getRandomArbitrary(1, 500)}px`;
+  div.style.height = `${getRandomArbitrary(1, 500)}px`;
+  div.style.left = `${getRandomArbitrary(1, 500)}px`;
+  div.style.top = `${getRandomArbitrary(1, 500)}px`;
+  div.style.backgroundColor = getRandomColor();
+  div.classList.add('draggable-div');
+  div.draggable = true;
+  return div;
+}
 
 const addDivButton = homeworkContainer.querySelector('#addDiv');
 
