@@ -19,8 +19,6 @@ import './dnd.html';
 
 const homeworkContainer = document.querySelector('#app');
 
-document.addEventListener('mousemove', (e) => {});
-
 export function createDiv() {
   const div = document.createElement('div');
   function getRandomArbitrary(min, max) {
@@ -51,4 +49,21 @@ const addDivButton = homeworkContainer.querySelector('#addDiv');
 addDivButton.addEventListener('click', function () {
   const div = createDiv();
   homeworkContainer.appendChild(div);
+  let offset = [0, 0];
+  let isDown = false;
+  div.addEventListener('mousedown', function (e) {
+    isDown = true;
+    offset = [div.offsetLeft - e.clientX, div.offsetTop - e.clientY];
+  });
+  document.addEventListener('mouseup', function () {
+    isDown = false;
+  });
+
+  document.addEventListener('mousemove', function (e) {
+    e.preventDefault();
+    if (isDown) {
+      div.style.left = e.clientX + offset[0] + 'px';
+      div.style.top = e.clientY + offset[1] + 'px';
+    }
+  });
 });
