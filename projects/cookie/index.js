@@ -46,34 +46,28 @@ const addButton = homeworkContainer.querySelector('#add-button');
 const listTable = homeworkContainer.querySelector('#list-table tbody');
 
 filterNameInput.addEventListener('input', function () {
+  printCookie();
   updateFilter();
 });
 
 addButton.addEventListener('click', () => {
-  const date = new Date(Date.now() + 86400e3).toUTCString();
-  if (!addNameInput.value || !addValueInput.value) {
-    return false;
-  } else if (getCookie(addNameInput.value)) {
-    console.log(getCookie(addNameInput.value));
+  const input = addNameInput.value || addValueInput.value;
+  if (input && getCookie(addNameInput.value)) {
     if (!isMatch(addValueInput.value)) {
       deleteCookieTable(addNameInput.value);
-
-      updateFilter();
+      document.cookie = `${addNameInput.value}=${addValueInput.value}`;
     } else {
-      deleteCookieTable(addNameInput.value);
-      getTrCookie(addNameInput.value, addValueInput.value);
+      document.cookie = `${addNameInput.value}=${addValueInput.value}`;
+      printCookie();
       updateFilter();
     }
 
-    document.cookie = `${addNameInput.value}=${addValueInput.value}; expires=${date}`;
-    updateFilter();
-
     addNameInput.value = '';
     addValueInput.value = '';
-  } else {
-    getTrCookie(addNameInput.value, addValueInput.value);
+  } else if (input) {
+    document.cookie = `${addNameInput.value}=${addValueInput.value}`;
+    printCookie();
     updateFilter();
-    document.cookie = `${addNameInput.value}=${addValueInput.value}; expires=${date}`;
 
     addNameInput.value = '';
     addValueInput.value = '';
@@ -105,6 +99,8 @@ function updateFilter() {
 }
 
 function printCookie() {
+  listTable.innerHTML = '';
+
   const objCookies = document.cookie.split('; ').reduce((acc, curr) => {
     const [name, value] = curr.split('=');
     acc[name] = value;
@@ -136,42 +132,35 @@ function getCookie(name) {
 
   return decodeURI(dc.substring(begin + prefix.length, end));
 }
-function deleteCookie(name) {
-  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:01 GMT`;
-}
 
+function deleteCookie(name) {
+  document.cookie = `${name}=; max-age=0`;
+  for (const tr of listTable.children) {
+    if (tr.firstElementChild.textContent === name) tr.remove();
+  }
+}
 function deleteCookieTable(name) {
   for (const tr of listTable.children) {
     if (tr.firstElementChild.textContent === name) tr.remove();
   }
 }
 
-// function getTd(name) {
-//   const allTd = listTable.querySelectorAll('td');
-//   for (let td of allTd) {
-//     if (td.textContent === name) {
-//       return td.nextElementSibling;
-//     }
-//   }
-// }
-
 function getTrCookie(cookieName, cookieValue) {
   const tableRow = document.createElement('tr');
   const tableName = document.createElement('td');
   const tableValue = document.createElement('td');
+  const tableDelete = document.createElement('td');
   const deleteBtn = document.createElement('button');
 
   tableName.textContent = cookieName;
   tableValue.textContent = cookieValue;
   deleteBtn.textContent = 'DELETE';
-  tableRow.appendChild(tableName);
-  tableRow.appendChild(tableValue);
-  tableRow.appendChild(deleteBtn);
+  tableDelete.append(deleteBtn);
+  tableRow.append(tableName, tableValue, tableDelete);
   deleteBtn.addEventListener('click', () => {
-    deleteCookieTable(cookieName);
     deleteCookie(cookieName);
   });
-  return listTable.appendChild(tableRow);
+  return listTable.append(tableRow);
 }
 
 printCookie();
