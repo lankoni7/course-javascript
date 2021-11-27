@@ -21,7 +21,7 @@ const homeworkContainer = document.querySelector('#app');
 
 export function createDiv() {
   const div = document.createElement('div');
-  function getRandomArbitrary(min, max) {
+  function getRandomNum(min, max) {
     return Math.floor(Math.random() * (max - min) + min);
   }
 
@@ -34,10 +34,10 @@ export function createDiv() {
     return color;
   }
 
-  div.style.width = `${getRandomArbitrary(1, 500)}px`;
-  div.style.height = `${getRandomArbitrary(1, 500)}px`;
-  div.style.left = `${getRandomArbitrary(1, 500)}px`;
-  div.style.top = `${getRandomArbitrary(1, 500)}px`;
+  div.style.width = `${getRandomNum(0, 300)}px`;
+  div.style.height = `${getRandomNum(0, 300)}px`;
+  div.style.left = `${getRandomNum(0, window.innerWidth)}px`;
+  div.style.top = `${getRandomNum(0, window.innerHeight)}px`;
   div.style.backgroundColor = getRandomColor();
   div.classList.add('draggable-div');
   div.draggable = true;
